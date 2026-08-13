@@ -7,13 +7,7 @@ export class MoviesController {
   constructor(private readonly moviesService: MoviesService) {}
   @Get()
   getAllMovies() {
-    const movies = this.moviesService.findAll();
-    const twoYearsAgo = new Date();
-    twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2);
-    return movies.map((m) => ({
-      ...m,
-      isRecent: m.release_year >= twoYearsAgo.getFullYear(),
-    }));
+    return this.moviesService.findAll();
   }
 
   @Get(':id')
@@ -21,9 +15,9 @@ export class MoviesController {
     return this.moviesService.findOne(Number(id));
   }
 
-  @Post()
-  @HttpCode(201)
-  addMovie(@Body() createMovieDto: createMovieDto) {
-    return this.moviesService.addOne(createMovieDto);
-  }
+  // @Post()
+  // @HttpCode(201)
+  // addMovie(@Body() createMovieDto: createMovieDto) {
+  //   return this.moviesService.addOne(createMovieDto);
+  // }
 }
