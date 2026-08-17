@@ -1,23 +1,25 @@
-import { Controller, Get, Param, Post, HttpCode, Body } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
 import { MoviesService } from './movies.service';
-import { createMovieDto } from './dto/createMovie.dto';
+import { movieListDto } from './dto/moviesList.dto';
+import { movieDetailsDto } from './dto/movieDetails.dto';
+import { plainToInstance } from 'class-transformer';
 
 @Controller('movies')
 export class MoviesController {
   constructor(private readonly moviesService: MoviesService) {}
   @Get()
-  getAllMovies() {
-    return this.moviesService.findAll();
+  async getAllMovies() {
+    const movies = await this.moviesService.findAll();
+    return plainToInstance(movieListDto, movies, {
+      excludeExtraneousValues: true,
+    });
   }
 
   @Get(':id')
-  getMovieById(@Param('id') id: number) {
-    return this.moviesService.findOne(Number(id));
+  async getMovieById(@Param('id', ParseIntPipe) id: number) {
+    const movie = await this.moviesService.findOne(id);
+    return plainToInstance(movieDetailsDto, movie, {
+      excludeExtraneousValues: true,
+    });
   }
-
-  // @Post()
-  // @HttpCode(201)
-  // addMovie(@Body() createMovieDto: createMovieDto) {
-  //   return this.moviesService.addOne(createMovieDto);
-  // }
 }
